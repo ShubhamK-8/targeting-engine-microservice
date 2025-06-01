@@ -6,5 +6,5 @@ import (
 
 // AddRoutes Routes request to its request controller
 func AddRoutes(router *gin.RouterGroup) {
-	router.GET("/v1/delivery", handleDelivery)
+	router.GET("v1/delivery", handleDelivery)
 }

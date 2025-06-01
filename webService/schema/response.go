@@ -8,13 +8,13 @@ type CampaignResponse struct {
 }
 
 type ResponseEntity struct {
-	Error   error       `json:"error,omitempty"`
+	Error   string      `json:"error,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
 	Success bool        `json:"success,omitempty"`
 }
 
 func (ResponseEntity *ResponseEntity) SetError(err error) *ResponseEntity {
-	ResponseEntity.Error = err
+	ResponseEntity.Error = err.Error()
 	return ResponseEntity
 }
 

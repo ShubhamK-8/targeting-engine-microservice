@@ -37,5 +37,4 @@ func handleDelivery(request *gin.Context) {
 
 	response.SetSuccess(true).SetData(matchedCampaigns)
 	request.IndentedJSON(http.StatusOK, response)
-	return
 }
