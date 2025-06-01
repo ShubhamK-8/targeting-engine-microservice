@@ -10,7 +10,7 @@ import (
 func FetchRequestParams(request *gin.Context) *webServiceSchema.DeliveryRequest {
 	params := &webServiceSchema.DeliveryRequest{
 		AppID:   request.Query("app"),
-		Country: request.Query("country"),
+		Country: request.Query("country"), //not sue it is country code or name
 		OS:      request.Query("os"),
 	}
 	return params
