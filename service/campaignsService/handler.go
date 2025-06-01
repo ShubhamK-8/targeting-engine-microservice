@@ -1,5 +1,13 @@
 package campaignsservice
 
-import
+import (
+	webServiceSchema "targeting-engine/webService/schema"
+	serviceHelper "targeting-engine/service/helper"
 
-func GetCampaignsList()
+)
+
+func GetCampaignsList(params *webServiceSchema.DeliveryRequest) ([]webServiceSchema.CampaignResponse, error) {
+
+	serviceHelper.MatchCampaigns()
+
+}

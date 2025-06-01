@@ -20,7 +20,7 @@ func handleDelivery(request *gin.Context) {
 		return
 	}
 
-	trackData, err := webServiceHelper.GetPackageStatus(fetchCriteria, params.Verbose, maskAddressFields)
+	trackData, err := webServiceHelper.GetCampaignsList(fetchCriteria, params.Verbose, maskAddressFields)
 	//zap.L().Info("Tracking Response", zap.Any("trackData", trackData), zap.Any("error", err))
 	if err != nil {
 		response.SetSuccess(false).SetDescription(err.GetErrorString()).SetError(err)
