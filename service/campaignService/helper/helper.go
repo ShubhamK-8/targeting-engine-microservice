@@ -6,19 +6,19 @@ import (
 )
 
 // MatchCampaigns takes DeliveryRequest and returns a list of matching CampaignResponse objects.
-func MatchCampaigns(req webServiceSchema.DeliveryRequest) []webServiceSchema.CampaignResponse {
+func MatchCampaigns(req webServiceSchema.DeliveryRequest, campaigns []serviceSchema.Campaign, rules map[string]serviceSchema.TargetingRule) []webServiceSchema.CampaignResponse {
 
 	var matched []webServiceSchema.CampaignResponse
 
 	// Iterate through all active campaigns.
-	for _, campaign := range s.campaigns {
+	for _, campaign := range campaigns {
 		// Only consider active campaigns.
 		if campaign.Status != "ACTIVE" {
 			continue
 		}
 
 		// Get the targeting rule for the current campaign.
-		rule, exists := s.rules[campaign.ID]
+		rule, exists := rules[campaign.ID]
 		if !exists {
 			// If no rule exists, it means the campaign has no targeting restrictions,ss
 			matched = append(matched, webServiceSchema.CampaignResponse{

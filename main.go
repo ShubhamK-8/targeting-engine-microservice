@@ -1,7 +1,7 @@
 package main
 
 import (
-	appInit "targeting-engine//init/app"
+	appInit "targeting-engine/init/app"
 )
 
 // do validation of input..allowed keyed
