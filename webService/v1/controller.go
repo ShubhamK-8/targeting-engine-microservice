@@ -3,6 +3,7 @@ package v1
 import (
 	"net/http"
 
+	campaignService "targeting-engine/service/campaignService"
 	webServiceHelper "targeting-engine/webService/helper"
 	webServiceSchema "targeting-engine/webService/schema"
 
@@ -20,16 +21,21 @@ func handleDelivery(request *gin.Context) {
 		return
 	}
 
-	trackData, err := webServiceHelper.GetCampaignsList(fetchCriteria, params.Verbose, maskAddressFields)
-	//zap.L().Info("Tracking Response", zap.Any("trackData", trackData), zap.Any("error", err))
+	matchedCampaigns, err := campaignService.GetCampaignsList(params)
+
 	if err != nil {
-		response.SetSuccess(false).SetDescription(err.GetErrorString()).SetError(err)
-		request.IndentedJSON(err.GetStatusCode(), response)
-		return
-	} else {
-		response.SetSuccess(true).SetData(trackData)
-		request.IndentedJSON(http.StatusOK, response)
+		response.SetError(err)
+		request.IndentedJSON(http.StatusBadRequest, response)
 		return
 	}
 
+	if len(matchedCampaigns) == 0 {
+		// No campaigns match, send HTTP 204 No Content.
+		request.IndentedJSON(http.StatusNoContent, response)
+		return
+	}
+
+	response.SetSuccess(true).SetData(matchedCampaigns)
+	request.IndentedJSON(http.StatusOK, response)
+	return
 }

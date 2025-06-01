@@ -1,9 +1,8 @@
 package campaignsservice
 
 import (
+	serviceHelper "targeting-engine/service/campaignService/helper"
 	webServiceSchema "targeting-engine/webService/schema"
-	serviceHelper "targeting-engine/service/helper"
-
 )
 
 func GetCampaignsList(params *webServiceSchema.DeliveryRequest) ([]webServiceSchema.CampaignResponse, error) {
