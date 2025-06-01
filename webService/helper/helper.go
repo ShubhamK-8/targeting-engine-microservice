@@ -17,7 +17,7 @@ func FetchRequestParams(request *gin.Context) *webServiceSchema.DeliveryRequest 
 }
 
 // ValidateDeliveryRequest checks if all required fields are present
-func ValidateDeliveryRequest(params *webServiceSchema.DeliveryRequest) error {
+func ValidateRequest(params *webServiceSchema.DeliveryRequest) error {
 	if params.AppID == "" || params.OS == "" || params.Country == "" {
 		return errors.New("missing one or more required parameters: app, os, country")
 	}

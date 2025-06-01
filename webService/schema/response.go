@@ -6,3 +6,24 @@ type CampaignResponse struct {
 	Img string `json:"img"` // Image URL
 	CTA string `json:"cta"` // Call To Action
 }
+
+type ResponseEntity struct {
+	Error   error       `json:"error,omitempty"`
+	Data    interface{} `json:"data,omitempty"`
+	Success bool        `json:"success,omitempty"`
+}
+
+func (ResponseEntity *ResponseEntity) SetError(err error) *ResponseEntity {
+	ResponseEntity.Error = err
+	return ResponseEntity
+}
+
+func (ResponseEntity *ResponseEntity) SetData(data interface{}) *ResponseEntity {
+	ResponseEntity.Data = data
+	return ResponseEntity
+}
+
+func (ResponseEntity *ResponseEntity) SetSuccess(success bool) *ResponseEntity {
+	ResponseEntity.Success = success
+	return ResponseEntity
+}

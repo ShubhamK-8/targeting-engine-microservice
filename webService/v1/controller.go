@@ -10,10 +10,15 @@ import (
 )
 
 func handleDelivery(request *gin.Context) {
-	response := &webServiceSchema.CampaignResponse{}
+	response := &webServiceSchema.ResponseEntity{}
 	params := webServiceHelper.FetchRequestParams(request)
-	
+	err := webServiceHelper.ValidateRequest(params)
 
+	if err != nil {
+		response.SetError(err)
+		request.IndentedJSON(http.StatusBadRequest, response)
+		return
+	}
 
 	trackData, err := webServiceHelper.GetPackageStatus(fetchCriteria, params.Verbose, maskAddressFields)
 	//zap.L().Info("Tracking Response", zap.Any("trackData", trackData), zap.Any("error", err))
