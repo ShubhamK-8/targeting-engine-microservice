@@ -9,4 +9,5 @@ var (
 	HealthCheckBasepath = "/health"
 
 	ElasticsearchHost = []string{}
+	RedisHost         = ""
 )
