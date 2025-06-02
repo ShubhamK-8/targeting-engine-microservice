@@ -25,7 +25,7 @@ func handleDelivery(request *gin.Context) {
 
 	if err != nil {
 		response.SetError(err)
-		request.IndentedJSON(http.StatusBadRequest, response)
+		request.IndentedJSON(http.StatusInternalServerError, response)
 		return
 	}
 

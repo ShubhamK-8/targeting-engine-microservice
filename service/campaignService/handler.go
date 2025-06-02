@@ -1,14 +1,20 @@
 package campaignsservice
 
 import (
-	db "targeting-engine/connection"
-	serviceHelper "targeting-engine/service/campaignService/helper"
+	"errors"
+	dbConnection "targeting-engine/connection/elasticSerach"
+	coreUtils "targeting-engine/coreUtils"
 	webServiceSchema "targeting-engine/webService/schema"
 )
 
-func GetCampaignsList(params *webServiceSchema.DeliveryRequest) ([]webServiceSchema.CampaignResponse, error) {
+func GetCampaignsList(params *webServiceSchema.DeliveryRequest) (campaigns []webServiceSchema.CampaignResponse, err error) {
 
-	campaigns := serviceHelper.MatchCampaigns(*params, db.Campaigns, db.Rules)
-	return campaigns, nil
-
+	esClient, err := dbConnection.NewElasticsearchClient(coreUtils.ElasticsearchHost)
+	if err != nil {
+		println("Error while makign connection with", err)
+		err = errors.New("Internal error occuered")
+		return
+	}
+	campaigns, err = dbConnection.QueryElasticsearch(esClient, params.AppID, params.Country, params.OS)
+	return
 }

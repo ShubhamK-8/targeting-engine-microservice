@@ -4,7 +4,7 @@ import (
 	appInit "targeting-engine/init/app"
 )
 
-// do validation of input..allowed keyed
+// Start Application
 func main() {
 	appInit.InitEnvironment()
 }

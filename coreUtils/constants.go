@@ -7,4 +7,6 @@ var (
 	Basepath = "/"
 	// HealthCheckBasepath is the basepath for the health check
 	HealthCheckBasepath = "/health"
+
+	ElasticsearchHost = []string{}
 )
