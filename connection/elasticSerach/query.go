@@ -5,8 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
+	redis "targeting-engine/connection/redis"
 	webServiceSchema "targeting-engine/webService/schema"
+
+	"github.com/go-redis/redis/v8"
 )
 
 // // Predefined set of campaigns (some active, some inactive for test coverage)
@@ -121,6 +125,25 @@ func QueryElasticsearch(esClient *ESClient, appID, country, os string) ([]webSer
 	country = strings.ToLower(country)
 	os = strings.ToLower(os)
 
+	var matchingCampaigns []webServiceSchema.CampaignResponse
+
+	// Create a cache key based on the query parameters
+	cacheKey := fmt.Sprintf("campaigns:%s:%s:%s", appID, country, os)
+	ctx := context.Background() // Use a context for Redis operations
+	redisClient, err := redis.NewRedisClient()
+	if err != nil {
+		fmt.Printf("Failed to create connection with redis error: %v", err)
+	}
+	matchingCampaigns, err = redisClient.GetCampaignsFromRedis(ctx, cacheKey)
+	if err == nil {
+		return matchingCampaigns, nil // Serve from cache
+	} else if err != nil {
+		// Log the error but continue to query Elasticsearch if Redis is having issues
+		fmt.Printf("Failed to retrieve from cache for key %s, querying Elasticsearch: %v", cacheKey, err)
+	} else {
+		fmt.Printf("Cache miss for key: %s, querying Elasticsearch.", cacheKey)
+	}
+
 	//  building the JSON query.
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
@@ -153,7 +176,6 @@ func QueryElasticsearch(esClient *ESClient, appID, country, os string) ([]webSer
 		return nil, fmt.Errorf("error executing campaign search: %w", err)
 	}
 
-	var matchingCampaigns []webServiceSchema.CampaignResponse
 	for _, rawHit := range searchRawResults {
 		var campaignDoc CampaignDocument
 		jsonBytes, _ := json.Marshal(rawHit)
@@ -168,6 +190,10 @@ func QueryElasticsearch(esClient *ESClient, appID, country, os string) ([]webSer
 			CTA: campaignDoc.CTA,
 		})
 	}
+
+	// Store results in Redis cache for future requests using the new function
+	cacheTTL := 15 * time.Minute // Set a TTL (Time-To-Live) for the cache entry, e.g., 5 minutes
+	redisClient.SetCampaignsInRedis(ctx, cacheKey, matchingCampaigns, cacheTTL)
 
 	fmt.Printf("Campaign search completed. Total matching campaigns parsed: %d\n", len(matchingCampaigns))
 	return matchingCampaigns, nil
