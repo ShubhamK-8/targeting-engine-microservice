@@ -7,10 +7,9 @@ import (
 	"strings"
 	"time"
 
-	redis "targeting-engine/connection/redis"
+	redis "targeting-engine/database/redis"
+	appInit "targeting-engine/init/prometheous"
 	webServiceSchema "targeting-engine/webService/schema"
-
-	"github.com/go-redis/redis/v8"
 )
 
 // // Predefined set of campaigns (some active, some inactive for test coverage)
@@ -144,6 +143,7 @@ func QueryElasticsearch(esClient *ESClient, appID, country, os string) ([]webSer
 		fmt.Printf("Cache miss for key: %s, querying Elasticsearch.", cacheKey)
 	}
 
+	startESQuery := time.Now() // Start timing Elasticsearch query
 	//  building the JSON query.
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
@@ -172,6 +172,8 @@ func QueryElasticsearch(esClient *ESClient, appID, country, os string) ([]webSer
 	}
 
 	searchRawResults, err := esClient.SearchDocuments(context.Background(), "campaigns", query)
+	// Observe Elasticsearch query duration
+	appInit.EsQueryDuration.Observe(time.Since(startESQuery).Seconds())
 	if err != nil {
 		return nil, fmt.Errorf("error executing campaign search: %w", err)
 	}
