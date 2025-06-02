@@ -2,8 +2,8 @@ package campaignsservice
 
 import (
 	"errors"
-	dbConnection "targeting-engine/connection/elasticSerach"
 	coreUtils "targeting-engine/coreUtils"
+	dbConnection "targeting-engine/database/elasticSerach"
 	webServiceSchema "targeting-engine/webService/schema"
 )
 
