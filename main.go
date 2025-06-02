@@ -6,5 +6,7 @@ import (
 
 // Start Application
 func main() {
+	appInit.InitPrometheus()
 	appInit.InitEnvironment()
+
 }

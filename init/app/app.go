@@ -8,6 +8,8 @@ import (
 
 	coreUtils "targeting-engine/coreUtils"
 	webService "targeting-engine/webService/v1"
+
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var principalRouter *gin.Engine
@@ -26,6 +28,11 @@ func registerRoutes(principalRouter *gin.Engine) {
 	webService.AddRoutes(servieRoutes)
 	fmt.Println("Added Routes: for Targeting Engine Service, Basepath", coreUtils.Basepath)
 	healthCheckRoutes.GET("v1/check", healthCheck)
+
+	// Register Prometheus metrics endpoint
+	principalRouter.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	fmt.Println("Added Routes: for Prometheus metrics, Basepath /metrics")
+
 }
 
 func healthCheck(request *gin.Context) {
